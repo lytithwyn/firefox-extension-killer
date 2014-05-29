@@ -49,7 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="readme.md" />
+    <None Include="readme.md" />
     <Compile Include="FirefoxExtensionController.cs" />
     <Compile Include="FirefoxExtension.cs" />
     <Compile Include="MainForm.cs" />
