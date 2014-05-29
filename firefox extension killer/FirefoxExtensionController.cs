@@ -79,6 +79,7 @@ namespace firefox_extension_killer
 		
 		private bool DeleteDirExtension(FirefoxExtension extension) {
 			try {
+				MakeDirectoryContentsRW(extension.path);
 				Directory.Delete(extension.path, true);
 			} catch(Exception e) {
 				return false;
@@ -120,6 +121,23 @@ namespace firefox_extension_killer
 			}
 			
 			return true;
+		}
+		
+		private void MakeDirectoryContentsRW(string path) {
+			string[] subDirs = Directory.GetDirectories(path);
+			foreach(string subDir in subDirs) {
+				FileInfo thisFileInfo = new FileInfo(subDir);
+				thisFileInfo.IsReadOnly = false;
+				thisFileInfo.Refresh();
+				MakeDirectoryContentsRW(subDir);
+			}
+			
+			string[] childFiles = Directory.GetFiles(path);
+			foreach(string childFile in childFiles) {
+				FileInfo thisFileInfo = new FileInfo(childFile);
+				thisFileInfo.IsReadOnly = false;
+				thisFileInfo.Refresh();
+			}
 		}
 		
 		private string GetUserFirefoxProfileRoot() {
