@@ -30,6 +30,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32;
+using System.Xml;
 
 namespace firefox_extension_killer
 {
@@ -171,7 +172,8 @@ namespace firefox_extension_killer
 		private void LoadDirTypeExtensionsFromPath(string path) {
 			string[] subDirsInPath = GetSubDirs(path);
 			foreach(string subDir in subDirsInPath) {
-				string name = MakeExtNameUnique(Path.GetFileName(subDir));
+				string name = GetNameFromDirExtension(subDir);
+				name = MakeExtNameUnique(name);
 				this.extensionList.Add(name, new FirefoxExtension (
 					name,
 					subDir,
@@ -229,6 +231,22 @@ namespace firefox_extension_killer
 					FirefoxExtension.ExtensionType.EXT_REG
 				));
 			}
+		}
+		
+		private string GetNameFromDirExtension(string path) {
+			string name = Path.GetFileName(path);
+			string[] installRDFS = Directory.GetFiles(path, "install.rdf");
+			
+			if(installRDFS.Length == 1) {
+				string installRDFText = File.ReadAllText(installRDFS[0]);
+				int nameOpenTagIndex = installRDFText.IndexOf("<em:name>");
+				int nameCloseTagIndex = installRDFText.IndexOf("</em:name>");
+				if(nameOpenTagIndex >=0 && nameCloseTagIndex >=0) {
+					name = installRDFText.Substring(nameOpenTagIndex+9, nameCloseTagIndex - (nameOpenTagIndex + 9));
+				}
+			}
+			
+			return name;
 		}
 		
 		private string[] ExplodeRegValuePath(string path) {
