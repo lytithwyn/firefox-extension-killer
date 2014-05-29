@@ -238,12 +238,22 @@ namespace firefox_extension_killer
 			string[] installRDFS = Directory.GetFiles(path, "install.rdf");
 			
 			if(installRDFS.Length == 1) {
-				string installRDFText = File.ReadAllText(installRDFS[0]);
-				int nameOpenTagIndex = installRDFText.IndexOf("<em:name>");
-				int nameCloseTagIndex = installRDFText.IndexOf("</em:name>");
-				if(nameOpenTagIndex >=0 && nameCloseTagIndex >=0) {
-					name = installRDFText.Substring(nameOpenTagIndex+9, nameCloseTagIndex - (nameOpenTagIndex + 9));
+				string installRDFName = GetNameFromInstallRDF(installRDFS[0]);
+				if(installRDFName != null) {
+					name = installRDFName;
 				}
+			}
+			
+			return name;
+		}
+		
+		private string GetNameFromInstallRDF(string installRDFPath) {
+			string name = null;
+			string installRDFText = File.ReadAllText(installRDFPath);
+			int nameOpenTagIndex = installRDFText.IndexOf("<em:name>");
+			int nameCloseTagIndex = installRDFText.IndexOf("</em:name>");
+			if(nameOpenTagIndex >=0 && nameCloseTagIndex >=0) {
+				name = installRDFText.Substring(nameOpenTagIndex+9, nameCloseTagIndex - (nameOpenTagIndex + 9));
 			}
 			
 			return name;
