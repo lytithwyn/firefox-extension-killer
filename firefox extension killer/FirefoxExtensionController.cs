@@ -31,6 +31,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32;
 using System.Xml;
+using Ionic.Zip;
 
 namespace firefox_extension_killer
 {
@@ -203,7 +204,8 @@ namespace firefox_extension_killer
 		private void LoadXPITypeExtensionsFromPath(string path) {
 			string[] xpiFilesInPath = GetXPIFiles(path);
 			foreach(string xpiFile in xpiFilesInPath) {
-				string name = MakeExtNameUnique(Path.GetFileNameWithoutExtension(xpiFile));
+				string name = GetNameFromXPIExtension(xpiFile);
+				name = MakeExtNameUnique(name);
 				this.extensionList.Add(name, new FirefoxExtension (
 					name,
 					xpiFile,
@@ -259,6 +261,27 @@ namespace firefox_extension_killer
 				string installRDFName = GetNameFromInstallRDF(installRDFS[0]);
 				if(installRDFName != null) {
 					name = installRDFName;
+				}
+			}
+			
+			return name;
+		}
+		
+		private string GetNameFromXPIExtension(string path) {
+			string name = Path.GetFileNameWithoutExtension(path);
+			string tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempDirectory);
+			
+			using (ZipFile xpiFile = ZipFile.Read(path)) {
+				if(xpiFile.ContainsEntry("install.rdf")) {
+					ZipEntry installRDFEntry = xpiFile["install.rdf"];
+					installRDFEntry.Extract(tempDirectory, ExtractExistingFileAction.OverwriteSilently);
+					string installRDFName = GetNameFromInstallRDF(Path.Combine(tempDirectory, "install.rdf"));
+					if(installRDFName != null) {
+						name = installRDFName;
+					}
+					MakeDirectoryContentsRW(tempDirectory);
+					Directory.Delete(tempDirectory, true);
 				}
 			}
 			
