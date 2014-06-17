@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Compile Include="Logger.cs" />
     <Compile Include="FirefoxExtensionController.cs" />
     <Compile Include="FirefoxExtension.cs" />
     <Compile Include="MainForm.cs" />

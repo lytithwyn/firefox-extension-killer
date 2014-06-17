@@ -46,9 +46,28 @@ namespace firefox_extension_killer
 		public FirefoxExtensionController()
 		{
 			extensionList = new System.Collections.Generic.Dictionary<string, FirefoxExtension>();
+			InitLog();
 			LoadExtensions();
 		}
 		
+		protected void Finalize() {
+			CloseLog();
+		}
+
+		private void InitLog() {
+			try {
+				string systemDrive = Path.GetPathRoot(Environment.SystemDirectory);
+				Logger.OpenLog(string.Format("{0}/firefox_extension_killer.txt", systemDrive));
+				Logger.LogLine(string.Format("Firefox Extension Killer Starting [{0}]", DateTime.Now.ToString("M/d/yyyy h:mm tt")));
+			} catch(Exception e) {
+				// do nothing for now
+			}
+		}
+
+		private void CloseLog() {
+			Logger.CloseLog();
+		}
+
 		public bool DeleteExtension(string name) {
 			bool success = false;
 			
