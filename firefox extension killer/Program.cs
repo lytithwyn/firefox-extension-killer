@@ -43,13 +43,6 @@ namespace firefox_extension_killer
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			FirefoxExtensionController myFFExtController = new FirefoxExtensionController();
-			System.Diagnostics.Debug.WriteLine("Found extensions:");
-			foreach(string extKey in myFFExtController.extensionList.Keys) {
-				FirefoxExtension extension = myFFExtController.extensionList[extKey];
-				System.Diagnostics.Debug.Print("{0}[{1}]: {2}", extension.name, extension.type, extension.path);
-			}
-			
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainForm());

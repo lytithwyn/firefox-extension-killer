@@ -48,6 +48,12 @@ namespace firefox_extension_killer
 			extensionList = new System.Collections.Generic.Dictionary<string, FirefoxExtension>();
 			InitLog();
 			LoadExtensions();
+
+			Logger.LogLine("Found Extensions: ");
+			foreach(string extName in this.extensionList.Keys) {
+				FirefoxExtension extension = this.extensionList[extName];
+				Logger.LogLine(string.Format("\t{0}\r\n\tType: {1}\r\n\tPath: {2}\r\n\t----------", extName, extension.type, extension.path));
+			}
 		}
 		
 		protected void Finalize() {
@@ -93,6 +99,7 @@ namespace firefox_extension_killer
 			
 			if(success) {
 				this.extensionList.Remove(extension.name);
+				Logger.LogLine(string.Format("Deleted extension: {0}", extension.name));
 			}
 			return success;
 		}
